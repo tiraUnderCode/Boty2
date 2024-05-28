@@ -1,6 +1,5 @@
 const TelegramBot = require('node-telegram-bot-api');
-const { LinearRegression } = require('sklearn').linear_model;
-const numpy = require('numpy-js');
+const mlRegression = require('ml-regression-multivariate-linear');
 
 // استبدل هذا بمفتاح البوت الخاص بك
 const token = "6679199332:AAHqGIBwKE1_9XmK6fIANglEZQ78yzvHn-Q";
@@ -134,12 +133,11 @@ bot.on('callback_query', (callbackQuery) => {
 });
 
 function analyzeData(attemptsData) {
-  const X = numpy.array(attemptsData.map(d => [d.nu, d.da, d.dn, d.ta]));
-  const y = numpy.array(attemptsData.map(d => d.result));
-  const model = new LinearRegression();
-  model.fit(X, y);
-  const coefficients = model.coef_;
-  const intercept = model.intercept_;
+  const X = attemptsData.map(d => [d.nu, d.da, d.dn, d.ta]);
+  const y = attemptsData.map(d => d.result);
+  const model = new mlRegression(X, y);
+  const coefficients = model.coefficients;
+  const intercept = model.intercept;
   const equation = `result = ${coefficients[0]}*NU + ${coefficients[1]}*DA + ${coefficients[2]}*DN + ${coefficients[3]}*TA + ${intercept}`;
   const mse = meanSquaredError(y, model.predict(X));
   return `${equation} (MSE: ${mse})`;
@@ -160,20 +158,13 @@ function excludeAnalysis(attemptsData, excluded) {
 
   if (remainingColumns.length === 0) return null;
 
-  const X = numpy.array(attemptsData.map(d => remainingColumns.map(col => d[col])));
-  const y = numpy.array(attemptsData.map(d => d.result));
-  const model = new LinearRegression();
-  model.fit(X, y);
-  const coefficients = model.coef_;
-  const intercept = model.intercept_;
+  const X = attemptsData.map(d => remainingColumns.map(col => d[col]));
+  const y = attemptsData.map(d => d.result);
+  const model = new mlRegression(X, y);
+  const coefficients = model.coefficients;
+  const intercept = model.intercept;
   const mse = meanSquaredError(y, model.predict(X));
 
-  const equation = `result = ${coefficients.map((coeff, i) => `${coeff}*${remainingColumns[i].toUpperCase()}`).join(' + ')} + ${intercept}`;
-
-  if (mse < 1) {
-    return `${equation} (MSE: ${mse})`;
-  } else {
-    excluded.push(columns[excluded.length]);
-    return excludeAnalysis(attemptsData, excluded);
-  }
+  const equation = `result = ${coefficients[0]}*${remainingColumns[0].toUpperCase()} + ${coefficients[1]}*${remainingColumns[1].toUpperCase()} + ${coefficients[2]}*${remainingColumns[2].toUpperCase()} + ${intercept} (MSE: ${mse})`;
+  return equation;
 }
