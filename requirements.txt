@@ -12,5 +12,5 @@ PySocks==1.7.1
 requests==2.32.2
 soupsieve==2.5
 stem==1.8.2
-telegram==0.0.1
+telegram
 urllib3==2.2.1
