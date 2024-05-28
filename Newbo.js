@@ -1,8 +1,8 @@
 const TelegramBot = require('node-telegram-bot-api');
-const { LinearRegression, MeanSquaredError } = require('machinelearn/linear_model');
-const numpy = require('numpy');
+const { LinearRegression } = require('sklearn').linear_model;
+const numpy = require('numpy-js');
 
-// استبدل هذا بالمفتاح الخاص بك
+// استبدل هذا بمفتاح البوت الخاص بك
 const token = "6679199332:AAHqGIBwKE1_9XmK6fIANglEZQ78yzvHn-Q";
 
 const bot = new TelegramBot(token, { polling: true });
@@ -141,8 +141,17 @@ function analyzeData(attemptsData) {
   const coefficients = model.coef_;
   const intercept = model.intercept_;
   const equation = `result = ${coefficients[0]}*NU + ${coefficients[1]}*DA + ${coefficients[2]}*DN + ${coefficients[3]}*TA + ${intercept}`;
-  const mse = new MeanSquaredError().compute(y, model.predict(X));
+  const mse = meanSquaredError(y, model.predict(X));
   return `${equation} (MSE: ${mse})`;
+}
+
+function meanSquaredError(y_true, y_pred) {
+  const n = y_true.length;
+  let sum = 0;
+  for (let i = 0; i < n; i++) {
+    sum += Math.pow((y_true[i] - y_pred[i]), 2);
+  }
+  return sum / n;
 }
 
 function excludeAnalysis(attemptsData, excluded) {
@@ -157,7 +166,7 @@ function excludeAnalysis(attemptsData, excluded) {
   model.fit(X, y);
   const coefficients = model.coef_;
   const intercept = model.intercept_;
-  const mse = new MeanSquaredError().compute(y, model.predict(X));
+  const mse = meanSquaredError(y, model.predict(X));
 
   const equation = `result = ${coefficients.map((coeff, i) => `${coeff}*${remainingColumns[i].toUpperCase()}`).join(' + ')} + ${intercept}`;
 
