@@ -1,4 +1,4 @@
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, MessageHandler, Filters, ConversationHandler
 import logging
 import numpy as np
@@ -112,8 +112,8 @@ def analyze_data(attempts_data):
     y = np.array([d['result'] for d in attempts_data])
     model = LinearRegression()
     model.fit(X, y)
-    coefficients = model.coef_
-    intercept = model.intercept_
+    coefficients = model.coef()
+    intercept = model.intercept()
     equation = f'result = {coefficients[0]}*NU + {coefficients[1]}*DA + {coefficients[2]}*DN + {coefficients[3]}*TA + {intercept}'
     mse = mean_squared_error(y, model.predict(X))
     return f'{equation} (MSE: {mse})'
@@ -129,8 +129,8 @@ def exclude_analysis(attempts_data, excluded):
     y = np.array([d['result'] for d in attempts_data])
     model = LinearRegression()
     model.fit(X, y)
-    coefficients = model.coef_
-    intercept = model.intercept_
+    coefficients = model.coef()
+    intercept = model.intercept()
     mse = mean_squared_error(y, model.predict(X))
 
     equation = 'result = ' + ' + '.join([f'{coeff}*{col.upper()}' for coeff, col in zip(coefficients, remaining_columns)]) + f' + {intercept}'
@@ -146,7 +146,7 @@ def cancel(update: Update, context):
     return ConversationHandler.END
 
 def main():
-    token = "6470010453:AAG4tRMuHwBiOzhOlAPEwU44hsh4TmPlTZk"
+    token = "6679199332:AAHqGIBwKE1_9XmK6fIANglEZQ78yzvHn-Q"
     updater = Updater(token, use_context=True)
     dp = updater.dispatcher
 
