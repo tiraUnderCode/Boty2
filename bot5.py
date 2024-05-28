@@ -9,7 +9,7 @@ import logging
 # إعداد تسجيل الأخطاء
 logging.basicConfig(level=logging.INFO)
 
-API_TOKEN = "6679199332:AAHqGIBwKE1_9XmK6fIANglEZQ78yzvHn-Q"
+API_TOKEN = "6470010453:AAG4tRMuHwBiOzhOlAPEwU44hsh4TmPlTZk"
 
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher(bot)
