@@ -2,7 +2,7 @@ const TelegramBot = require('node-telegram-bot-api');
 const mlRegression = require('ml-regression-multivariate-linear');
 
 // استبدل هذا بمفتاح البوت الخاص بك
-const token = "6679199332:AAHqGIBwKE1_9XmK6fIANglEZQ78yzvHn-Q";
+const token = "6470010453:AAG4tRMuHwBiOzhOlAPEwU44hsh4TmPlTZk";
 
 const bot = new TelegramBot(token, { polling: true });
 
